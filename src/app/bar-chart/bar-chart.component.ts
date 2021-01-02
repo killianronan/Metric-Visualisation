@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
+import { GithubAccessService } from '../services/github-access.service';
 
 @Component({
   selector: 'app-bar-chart',
@@ -8,22 +9,30 @@ import * as d3 from 'd3';
 })
 export class BarChartComponent implements OnInit {
   private data = [
-    {"Framework": "Vue", "Stars": "166443", "Released": "2014"},
-    {"Framework": "React", "Stars": "150793", "Released": "2013"},
-    {"Framework": "Angular", "Stars": "62342", "Released": "2016"},
-    {"Framework": "Backbone", "Stars": "27647", "Released": "2010"},
-    {"Framework": "Ember", "Stars": "21471", "Released": "2011"},
+    {title: "title1", score: "166443", "Released": "2014"},
+    {title: "title2", score: "150793", "Released": "2013"},
+    {title: "title3", score: "62342", "Released": "2016"},
+    {title: "title4", score: "27647", "Released": "2010"},
+    {title: "title5", score: "21471", "Released": "2011"},
   ];
   private svg;
   private margin = 50;
   private width = 750 - (this.margin * 2);
   private height = 400 - (this.margin * 2);
+  public githubData: any;
+  constructor(public apiService: GithubAccessService) { }
 
-  constructor() { }
-
-  ngOnInit(): void {
+  ngOnInit(){
+    this.getData();
     this.createSvg();
     this.drawBars(this.data);
+  }
+
+  public async getData(){
+    await this.apiService.getPosts().then((value) => {
+      this.githubData = value;
+      console.log("Data in component: ", this.githubData);
+    });
   }
 
   private createSvg(){
@@ -38,7 +47,7 @@ export class BarChartComponent implements OnInit {
     // Create the X-axis band scale
     const x = d3.scaleBand()
     .range([0, this.width])
-    .domain(data.map(d => d.Framework))
+    .domain(data.map(d => d.title))
     .padding(0.2);
 
     // Draw the X-axis on the DOM
@@ -63,10 +72,10 @@ export class BarChartComponent implements OnInit {
     .data(data)
     .enter()
     .append("rect")
-    .attr("x", d => x(d.Framework))
-    .attr("y", d => y(d.Stars))
+    .attr("x", d => x(d.title))
+    .attr("y", d => y(d.score))
     .attr("width", x.bandwidth())
-    .attr("height", (d) => this.height - y(d.Stars))
+    .attr("height", (d) => this.height - y(d.score))
     .attr("fill", "#d04a35");
   }
 }
