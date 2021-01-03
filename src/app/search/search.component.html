@@ -1,0 +1,23 @@
+<input [(ngModel)]="username" placeholder="Enter a username to fetch data for.." style="width: 50%; margin: 10px;">
+<button (click)="findUser()">Search User</button>
+<br>
+<div *ngIf="selectedUser">
+    <div>
+        Account Creation Date: {{selectedUser.created_at  | date:'short'}}
+    </div>
+    <div>
+        User Bio: {{selectedUser.bio}}
+    </div>
+    <div>
+        Number of Repositories: {{selectedUser.public_repos}}
+    </div>
+    <div>
+        Location: {{selectedUser.location}}
+    </div>
+    <div *ngIf="selectedUser.company!==null">
+        Company: {{selectedUser.company}}
+    </div>
+    <a [attr.href]="selectedUser.html_url">
+        Link to profile
+    </a>
+</div>
