@@ -29,7 +29,8 @@ export class BarChartComponent implements OnInit {
   }
 
   public async getData(){
-    await this.apiService.getPosts().then((value) => {
+    this.apiService.getPosts().subscribe((value) => {
+      console.log("val", value);
       this.githubData = value;
       console.log("Data in component: ", this.githubData);
     });
