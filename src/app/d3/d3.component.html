@@ -1,0 +1,36 @@
+<div class="Row" style="height: 100%;" >
+    <div class="Column" style="height: 100%; width: 45%;">
+        <h2 class="top-contributors-header">Top d3 contributors</h2>
+        <div id="my_dataviz" style="height: 100vh">
+            <div class="contributors-list">
+                <div *ngFor="let contributor of contributorsData; let i = index">
+                    <div class="contributor-item">
+                        <div class="Row">
+                            <div>
+                                {{i+1}}. User: {{contributor.login}}
+                            </div>
+                            <div>
+                                Contributions: {{contributor.contributions}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3 style="margin-left: 20%;">Contributors Bar Chart</h3>
+        </div>
+    </div>
+    <div class="Column" style="height: 100%; width: 30%;">
+        <div class="repo-details">
+            <h4>d3 Repository Details</h4>
+            <div>Number of Forks: {{repoData.forks_count}}</div>
+            <div>Web URL: <a [attr.href]="repoData.homepage">{{repoData.homepage}}</a></div>
+            <div>Language: {{languagesData[0]}}</div>
+        </div>
+        <div *ngIf="userData!==undefined">
+            <h4>D3 Organisation Details</h4>
+            <div>Bio: {{userData.bio}}</div>
+            <div>Location: {{userData.location}}</div>
+            <div>Account creation date: {{userData.created_at | date:'short'}}</div>
+        </div>
+    </div>
+</div>

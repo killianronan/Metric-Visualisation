@@ -1,0 +1,22 @@
+.Row {
+    display: table;
+    width: 100%; 
+    border-spacing: 10px;
+}
+.Column {
+    display: table-cell;
+}
+.top-contributors-header{
+    margin-left: 20%;
+}
+.contributors-list{
+    height: 30%; 
+    overflow-y: scroll;
+}
+.contributor-item{
+    background-color: aliceblue; 
+    border-bottom: 0.5px solid grey;
+}
+.repo-details{
+    height: 35%;
+}

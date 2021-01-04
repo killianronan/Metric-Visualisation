@@ -14,7 +14,6 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = "";
-    this.getData();
   }
   findUser(){
     this.apiService.getUserData(this.username).subscribe((value) => {
@@ -26,11 +25,6 @@ export class SearchComponent implements OnInit {
         this.selectedUser = value;
         console.log("user data: ",this.selectedUser);
       }
-    });
-  }
-  getData(){
-    this.apiService.getRepositoryData().subscribe((value) => {
-      console.log("user data: ",value);
     });
   }
 

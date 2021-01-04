@@ -31,11 +31,49 @@ export class GithubAccessService {
       })
   );
   }
-  getRepositoryData() {
-    this.RepoUrl = "https://api.github.com/repos/d3/d3/contributors";
+  getRepositoryContributors(username: String, repo: String) {
+    this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/contributors";
     const options = {
       headers: {
-        authorization: "token "
+        authorization: "token 749b8208147b89da6a7b1d12c7dddd95346efc74"
+      }
+    };
+    return this.http.get(this.RepoUrl,options).pipe(
+      catchError(error => {
+          if (error.error instanceof ErrorEvent) {
+              this.errorMsg = `Error: ${error.error.message}`;
+          } else {
+              this.errorMsg = `Error: ${error.message}`;
+          }
+          console.log("ERROR");
+          return of([]);
+      })
+  );
+  }
+  getRepositoryData(username: String, repo: String) {
+    this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo;
+    const options = {
+      headers: {
+        authorization: "token 749b8208147b89da6a7b1d12c7dddd95346efc74"
+      }
+    };
+    return this.http.get(this.RepoUrl,options).pipe(
+      catchError(error => {
+          if (error.error instanceof ErrorEvent) {
+              this.errorMsg = `Error: ${error.error.message}`;
+          } else {
+              this.errorMsg = `Error: ${error.message}`;
+          }
+          console.log("ERROR");
+          return of([]);
+      })
+  );
+  }
+  getRepositoryLanguages(username: String, repo: String) {
+    this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/languages";
+    const options = {
+      headers: {
+        authorization: "token 749b8208147b89da6a7b1d12c7dddd95346efc74"
       }
     };
     return this.http.get(this.RepoUrl,options).pipe(
