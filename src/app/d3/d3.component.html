@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="Column" style="height: 100%; width: 30%;">
-            <div class="repo-details">
+            <div class="repo-details" *ngIf="repoData!==undefined && languagesData!==undefined">
                 <h4>d3 Repository Details</h4>
                 <div>Number of Forks: {{repoData.forks_count}}</div>
                 <div>Web URL: <a [attr.href]="repoData.homepage">{{repoData.homepage}}</a></div>
@@ -45,5 +45,4 @@
         <figure id="bar"></figure>
         <p style="margin-left: 20%;">No. of users involed in latest 30 commits: {{uniqueX.length}} </p>
     </div>
-
 </div>
