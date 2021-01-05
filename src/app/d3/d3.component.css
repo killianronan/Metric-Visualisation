@@ -18,5 +18,14 @@
     border-bottom: 0.5px solid grey;
 }
 .repo-details{
-    height: 35%;
+    background-color: lightgreen; 
+    border: 0.5px solid grey;
+    margin-top: 50px; 
+    margin-bottom: 50px; 
+    padding: 5px;
+}
+.org-details{
+    background-color: lightgreen; 
+    border: 0.5px solid grey; 
+    padding: 5px;
 }

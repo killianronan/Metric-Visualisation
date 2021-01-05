@@ -1,36 +1,43 @@
-<div class="Row" style="height: 100%;" >
-    <div class="Column" style="height: 100%; width: 45%;">
-        <h2 class="top-contributors-header">Top d3 contributors</h2>
-        <div id="my_dataviz" style="height: 100vh">
-            <div class="contributors-list">
-                <div *ngFor="let contributor of contributorsData; let i = index">
-                    <div class="contributor-item">
-                        <div class="Row">
-                            <div>
-                                {{i+1}}. User: {{contributor.login}}
-                            </div>
-                            <div>
-                                Contributions: {{contributor.contributions}}
+<div style="height: 100%; background-color: lightgray;">
+    <div class="Row" style=" height: 100%; overflow-y: scroll; background-color: lightgray;">
+        <div class="Column" style=" width: 45%;">
+            <h3 class="top-contributors-header">Top d3 contributors</h3>
+            <div id="my_dataviz" style="height: 100vh">
+                <div class="contributors-list">
+                    <div *ngFor="let contributor of contributorsData; let i = index">
+                        <div class="contributor-item">
+                            <div class="Row">
+                                <div>
+                                    {{i+1}}. User: {{contributor.login}}
+                                </div>
+                                <div>
+                                    Contributions: {{contributor.contributions}}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <h3 style="margin-left: 20%; margin-top: 50px;">Contributors Bar Chart</h3>
             </div>
-            <h3 style="margin-left: 20%;">Contributors Bar Chart</h3>
+        </div>
+        <div class="Column" style="height: 100%; width: 30%;">
+            <div class="repo-details">
+                <h4>d3 Repository Details</h4>
+                <div>Number of Forks: {{repoData.forks_count}}</div>
+                <div>Web URL: <a [attr.href]="repoData.homepage">{{repoData.homepage}}</a></div>
+                <div>Language: {{languagesData[0]}}</div>
+            </div>
+            <div *ngIf="userData!==undefined" class="org-details">
+                <h4>D3 Organisation Details</h4>
+                <div>Bio: {{userData.bio}}</div>
+                <div>Location: {{userData.location}}</div>
+                <div>Account creation date: {{userData.created_at | date:'short'}}</div>
+            </div>
         </div>
     </div>
-    <div class="Column" style="height: 100%; width: 30%;">
-        <div class="repo-details">
-            <h4>d3 Repository Details</h4>
-            <div>Number of Forks: {{repoData.forks_count}}</div>
-            <div>Web URL: <a [attr.href]="repoData.homepage">{{repoData.homepage}}</a></div>
-            <div>Language: {{languagesData[0]}}</div>
-        </div>
-        <div *ngIf="userData!==undefined">
-            <h4>D3 Organisation Details</h4>
-            <div>Bio: {{userData.bio}}</div>
-            <div>Location: {{userData.location}}</div>
-            <div>Account creation date: {{userData.created_at | date:'short'}}</div>
-        </div>
+    <div class="Row" style="background-color: lightgray; ">
+        <h3 style="margin-left: 20%; margin-top: 100px;"> Latest 30 Commits breakdown</h3>
+        <figure id="bar"></figure>
+        <p style="margin-left: 20%;">No. of users involed in latest 30 commits: {{uniqueX.length}} </p>
     </div>
 </div>

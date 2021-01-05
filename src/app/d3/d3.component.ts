@@ -12,7 +12,13 @@ export class D3Component implements OnInit {
   contributorsData: any;
   userData: any;
   languagesData: any;
+  commitsData: any;
+  uniqueX: any = [];
+  uniqueXCount: any = [];
+  combinedData: any = [];
+
   public pieSVG;
+  public barSVG;
   public isHover;
 
   constructor(public apiService: GithubAccessService) { }
@@ -35,12 +41,90 @@ export class D3Component implements OnInit {
       console.log("Repo langugages: ",value);
       value = Object.keys(value);
       this.languagesData = value;
-      console.log(value);
+    });
+    this.apiService.getRepositoryCommits("d3", "d3").subscribe((value) => {
+      console.log("Repo commits: ",value);
+      this.commitsData = value;
+      this.calculateBarChartData();
+      this.buildBarChart();
     });
     this.apiService.getUserData("d3").subscribe((value) => {
       console.log("User data: ",value);
       this.userData = value;
     });
+  }
+  calculateBarChartData(){
+    this.uniqueXCount = [];
+    for(let index = 0; index<this.commitsData.length; index++){
+      if(this.uniqueX.includes(this.commitsData[index].author.login)){
+        var index2 = this.uniqueX.indexOf(this.commitsData[index].author.login);
+        this.uniqueXCount[index2]++;
+      }
+      if(!this.uniqueX.includes(this.commitsData[index].author.login)){
+        this.uniqueX.push(this.commitsData[index].author.login);
+        this.uniqueXCount.push(1);
+      }
+    }
+    console.log("Unique: ",this.uniqueX);
+    console.log("Unique count: ",this.uniqueXCount);
+  }
+  buildBarChart(){
+    var data = [
+      {title: "title1", score: "166443", "Released": "2014"},
+      {title: "title2", score: "150793", "Released": "2013"},
+      {title: "title3", score: "62342", "Released": "2016"},
+      {title: "title4", score: "27647", "Released": "2010"},
+      {title: "title5", score: "21471", "Released": "2011"},
+    ];
+
+    var margin = 50;
+    var width = 600 - (margin * 2);
+    var height = 400 - (margin * 2);
+    this.barSVG = d3.select("figure#bar")
+    .append("svg")
+    .attr("width", width + (margin * 2))
+    .attr("height", height + (margin * 2))
+    .append("g")
+    .attr("transform", "translate(" + margin + "," + margin + ")");
+    // Create the X-axis band scale
+    const x = d3.scaleBand()
+    .range([0, width])
+    .domain(this.uniqueX.map(d => d))
+    .padding(0.5);
+
+    // Draw the X-axis on the DOM
+    this.barSVG.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+    // Create the Y-axis band scale
+    const y = d3.scaleLinear()
+    .domain([0, 25])
+    .range([height, 0]);
+
+    // Draw the Y-axis on the DOM
+    this.barSVG.append("g")
+    .call(d3.axisLeft(y));
+    for(let index = 0; index< this.uniqueX.length; index++){
+      this.combinedData.push({
+        user: this.uniqueX[index],
+        count: this.uniqueXCount[index]
+      })
+    }
+    console.log("OBJECT: ", this.combinedData);
+    // Create and fill the bars
+    this.barSVG.selectAll("bars")
+    .data(this.combinedData)
+    .enter()
+    .append("rect")
+    .attr("x", d => x(d.user))
+    .attr("y", d => y(d.count))
+    .attr("width", x.bandwidth())
+    .attr("height", (d) => height - y(d.count))
+    .attr("fill", "#d04a35");
   }
   buildPieChart(){
   // set the dimensions and margins of the graph

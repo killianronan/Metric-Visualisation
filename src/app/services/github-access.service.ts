@@ -35,7 +35,7 @@ export class GithubAccessService {
     this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/contributors";
     const options = {
       headers: {
-        authorization: "token 749b8208147b89da6a7b1d12c7dddd95346efc74"
+        authorization: "token e1b9d0a8621f8ab88b52dbe279c6fac8a22e15ef"
       }
     };
     return this.http.get(this.RepoUrl,options).pipe(
@@ -54,7 +54,7 @@ export class GithubAccessService {
     this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo;
     const options = {
       headers: {
-        authorization: "token 749b8208147b89da6a7b1d12c7dddd95346efc74"
+        authorization: "token e1b9d0a8621f8ab88b52dbe279c6fac8a22e15ef"
       }
     };
     return this.http.get(this.RepoUrl,options).pipe(
@@ -73,7 +73,26 @@ export class GithubAccessService {
     this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/languages";
     const options = {
       headers: {
-        authorization: "token 749b8208147b89da6a7b1d12c7dddd95346efc74"
+        authorization: "token e1b9d0a8621f8ab88b52dbe279c6fac8a22e15ef"
+      }
+    };
+    return this.http.get(this.RepoUrl,options).pipe(
+      catchError(error => {
+          if (error.error instanceof ErrorEvent) {
+              this.errorMsg = `Error: ${error.error.message}`;
+          } else {
+              this.errorMsg = `Error: ${error.message}`;
+          }
+          console.log("ERROR");
+          return of([]);
+      })
+  );
+  }
+  getRepositoryCommits(username: String, repo: String) {
+    this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/commits";
+    const options = {
+      headers: {
+        authorization: "token e1b9d0a8621f8ab88b52dbe279c6fac8a22e15ef"
       }
     };
     return this.http.get(this.RepoUrl,options).pipe(
