@@ -19,11 +19,13 @@ export class D3Component implements OnInit {
   branchesData: any;
   collaboratorsData: any;
   contributionsCount: any = [];
-
+  commitStats: any;
+  lineGraphData: any = [];
 
   public pieSVG;
   public barSVG;
   public scatterSVG;
+  public histSVG;
   public isHover;
 
   constructor(public apiService: GithubAccessService) { }
@@ -34,45 +36,104 @@ export class D3Component implements OnInit {
   }
   getD3Data(){
     this.apiService.getRepositoryContributors("d3", "d3").subscribe((value) => {
-      console.log("Repo Contributors: ",value);
       this.contributorsData = value;
       this.buildPieChart();
     });
     this.apiService.getRepositoryData("d3", "d3").subscribe((value) => {
-      console.log("Repo data: ",value);
       this.repoData = value;
     });
     this.apiService.getRepositoryLanguages("d3", "d3").subscribe((value) => {
-      console.log("Repo langugages: ",value);
       value = Object.keys(value);
       this.languagesData = value;
     });
     this.apiService.getRepositoryCommits("d3", "d3").subscribe((value) => {
-      console.log("Repo commits: ",value);
       this.commitsData = value;
       this.calculateBarChartData();
       this.buildBarChart();
     });
     this.apiService.getRepositoryBranches("d3", "d3").subscribe((value) => {
-      console.log("Repo branches: ",value);
       this.branchesData = value;
     });
     this.apiService.getRepositoryContributorStats("d3", "d3").subscribe((value) => {
-      console.log("Repo collaborators: ",value);
       this.collaboratorsData = value;
       this.calculateScatterChartData();
       this.buildScatterGraph();
     });
+    this.apiService.getLatestCommitStats("d3", "d3").subscribe((value) => {
+      this.commitStats = value;
+      this.calculateLineGraphData();
+      this.buildLineGraph();
+    });
     this.apiService.getUserData("d3").subscribe((value) => {
-      console.log("User data: ",value);
       this.userData = value;
     });
+  }
+  calculateLineGraphData(){
+    for(let index = 0; index< this.commitStats.length; index++){
+      if(this.commitStats[index].total!=0){
+        var date = new Date(this.commitStats[index].week *1000).toLocaleDateString("en-US");
+        this.lineGraphData.push({total: this.commitStats[index].total, index: index, date: date});
+      }
+    }
+  }
+  buildLineGraph(){
+    var margin = {top: 10, right: 30, bottom: 40, left: 100},
+    width = 460 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+    this.histSVG = d3.select("#line-plot")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+    // X axis
+    var x = d3.scaleLinear()
+    .domain([0, 55])
+    .range([ 0, width]);
+    this.histSVG.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+      .attr("transform", "translate(-10,0)rotate(-45)")
+      .style("text-anchor", "end");
+
+    // Y axis
+    var y = d3.scaleBand()
+    .range([ 0, height ])
+    .domain(this.lineGraphData.map(function(d) { return d.date; }))
+    .padding(1);
+    this.histSVG.append("g")
+    .call(d3.axisLeft(y))
+
+
+    // Lines
+    this.histSVG.selectAll("myline")
+    .data(this.lineGraphData)
+    .enter()
+    .append("line")
+    .attr("x1", function(d) { return x(d.total); })
+    .attr("x2", x(0))
+    .attr("y1", function(d) { return y(d.date); })
+    .attr("y2", function(d) { return y(d.date); })
+    .attr("stroke", "grey")
+
+    // Circles
+    this.histSVG.selectAll("mycircle")
+    .data(this.lineGraphData)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d) { return x(d.total); })
+    .attr("cy", function(d) { return y(d.date); })
+    .attr("r", "4")
+    .style("fill", "#69b3a2")
+    .attr("stroke", "black");
   }
   calculateScatterChartData(){
     this.contributionsCount = [];
     var additions = 0;
     var deletions = 0;
-    console.log(this.collaboratorsData[99].weeks.length);
     for(let index = 0; index< this.collaboratorsData[99].weeks.length; index++){
       var weekCount = 0;
       additions=this.collaboratorsData[99].weeks[index].a;
@@ -82,7 +143,6 @@ export class D3Component implements OnInit {
         this.contributionsCount.push({changes: weekCount, commits: this.collaboratorsData[99].weeks[index].c, index: index});
       }
     }
-    console.log("HERE",this.contributionsCount)
   }
   calculateBarChartData(){
     this.uniqueXCount = [];
@@ -96,16 +156,12 @@ export class D3Component implements OnInit {
         this.uniqueXCount.push(1);
       }
     }
-    console.log("Unique: ",this.uniqueX);
-    console.log("Unique count: ",this.uniqueXCount);
   }
   buildScatterGraph(){
       var margin = {top: 50, right: 0, bottom: 30, left: 50},
       width = 500 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
-
-    // append the svg object to the body of the page
     this.scatterSVG = d3.select("#my_dataviz")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -114,7 +170,7 @@ export class D3Component implements OnInit {
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-    // Add X axis
+    // X axis
     var x = d3.scaleLinear()
     .domain([0, 572])
     .range([ 0, width ]);
@@ -129,14 +185,14 @@ export class D3Component implements OnInit {
     .style("text-anchor", "middle")
     .text("Date");
 
-    // Add Y axis
+    // Y axis
     var y = d3.scaleLinear()
     .domain([0, 75000])
     .range([ height, 0]);
     this.scatterSVG.append("g")
     .call(d3.axisLeft(y));
 
-    // Add dots
+    // dots
     this.scatterSVG.append('g')
     .selectAll("dot")
     .data(this.contributionsCount)
@@ -158,13 +214,13 @@ export class D3Component implements OnInit {
     .attr("height", height + (margin * 2))
     .append("g")
     .attr("transform", "translate(" + margin + "," + margin + ")");
-    // Create the X-axis band scale
+    // X-axis band scale
     const x = d3.scaleBand()
     .range([0, width])
     .domain(this.uniqueX.map(d => d))
     .padding(0.5);
 
-    // Draw the X-axis on the DOM
+    // X-axis
     this.barSVG.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x))
@@ -172,12 +228,12 @@ export class D3Component implements OnInit {
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end");
 
-    // Create the Y-axis band scale
+    // Y-axis band scale
     const y = d3.scaleLinear()
     .domain([0, 25])
     .range([height, 0]);
 
-    // Draw the Y-axis on the DOM
+    // Y-axis
     this.barSVG.append("g")
     .call(d3.axisLeft(y));
     for(let index = 0; index< this.uniqueX.length; index++){
@@ -186,8 +242,7 @@ export class D3Component implements OnInit {
         count: this.uniqueXCount[index]
       })
     }
-    console.log("OBJECT: ", this.combinedData);
-    // Create and fill the bars
+    // bars
     this.barSVG.selectAll("bars")
     .data(this.combinedData)
     .enter()
@@ -199,15 +254,11 @@ export class D3Component implements OnInit {
     .attr("fill", "#d04a35");
   }
   buildPieChart(){
-  // set the dimensions and margins of the graph
   var width = 450
   var height = 450
   var margin = 40
-
-  // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
   var radius = Math.min(width, height) / 2 - margin
 
-  // append the svg object to the div called 'my_dataviz'
   this.pieSVG = d3.select("#my_dataviz")
     .append("svg")
       .attr("width", width)
@@ -215,14 +266,14 @@ export class D3Component implements OnInit {
     .append("g")
       .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-  // set the color scale
+  // colors
   var color = d3.scaleOrdinal()
     .domain(this.contributorsData.map(d => d.contributions.toString()))
     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56","#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56","#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56","#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56","#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56","#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"])
 
 
   const pie = d3.pie<any>().value((d: any) => Number(d.contributions));
-  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+  //pie chart
   this.pieSVG
   .selectAll('pieces')
   .data(pie(this.contributorsData))
@@ -236,7 +287,7 @@ export class D3Component implements OnInit {
   .attr("stroke", "#121926")
   .style("stroke-width", "1px");
 
-  // Add labels
+  // labels
   const labelLocation = d3.arc()
   .innerRadius(100)
   .outerRadius(radius);

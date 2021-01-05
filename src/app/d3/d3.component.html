@@ -26,6 +26,7 @@
                 <div>Number of Forks: {{repoData.forks_count}}</div>
                 <div>Web URL: <a [attr.href]="repoData.homepage">{{repoData.homepage}}</a></div>
                 <div>Language: {{languagesData[0]}}</div>
+                <div>Repo creation date: {{repoData.created_at | date:'short'}}</div>
             </div>
             <div *ngIf="userData!==undefined" class="org-details">
                 <h4>D3 Organisation Details</h4>
@@ -36,7 +37,7 @@
         </div>
     </div>
     <div class="Row" style="background-color: lightgray; height: 90vh;">
-        <h3 style="margin-left: 10%; margin-top: 70px;"> Top User mbostock commits since 2010</h3>
+        <h3 style="margin-left: 10%; margin-top: 70px;"> Top User mbostock commits since creation</h3>
         <div id="my_dataviz"></div>
         <p style="margin-left: 15%;">Scatter graph: X = Past 537 weeks, Y = Number of changes</p>
     </div>
@@ -44,5 +45,9 @@
         <h3 style="margin-left: 10%;"> Latest 30 Commits breakdown</h3>
         <figure id="bar"></figure>
         <p style="margin-left: 20%;">No. of users involed in latest 30 commits: {{uniqueX.length}} </p>
+    </div>
+    <div class="Row" style="background-color: lightgray; height: 90vh;">
+        <h3 style="margin-left: 10%; margin-top: 70px;"> Commits in last year</h3>
+        <div id="line-plot"></div>
     </div>
 </div>
