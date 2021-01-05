@@ -78,7 +78,7 @@ export class D3Component implements OnInit {
   }
   buildLineGraph(){
     var margin = {top: 10, right: 30, bottom: 40, left: 100},
-    width = 460 - margin.left - margin.right,
+    width = 550 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
     this.histSVG = d3.select("#line-plot")
     .append("svg")

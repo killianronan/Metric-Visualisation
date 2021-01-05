@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BarChartComponent } from './bar-chart/bar-chart.component';
+// import { BarChartComponent } from './bar-chart/bar-chart.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
-    BarChartComponent,
+    // BarChartComponent,
     SearchComponent,
     D3Component
   ],

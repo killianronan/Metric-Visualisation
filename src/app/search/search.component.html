@@ -1,5 +1,7 @@
 <input [(ngModel)]="username" placeholder="Enter a username to fetch data for.." style="width: 50%; margin: 10px;">
 <button (click)="findUser()">Search User</button>
+<button (click)="resetSearch()" style="margin-left: 30px;">Reset Search</button>
+
 <br>
 <div *ngIf="selectedUser">
     <div>
@@ -20,4 +22,8 @@
     <a [attr.href]="selectedUser.html_url">
         Link to profile
     </a>
+</div>
+<div >
+    <h3 *ngIf="treemapSVG!=null">Repo Treemap</h3>
+    <div id="treemap"></div>
 </div>
