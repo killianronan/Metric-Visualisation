@@ -16,9 +16,14 @@ export class D3Component implements OnInit {
   uniqueX: any = [];
   uniqueXCount: any = [];
   combinedData: any = [];
+  branchesData: any;
+  collaboratorsData: any;
+  contributionsCount: any = [];
+
 
   public pieSVG;
   public barSVG;
+  public scatterSVG;
   public isHover;
 
   constructor(public apiService: GithubAccessService) { }
@@ -48,10 +53,36 @@ export class D3Component implements OnInit {
       this.calculateBarChartData();
       this.buildBarChart();
     });
+    this.apiService.getRepositoryBranches("d3", "d3").subscribe((value) => {
+      console.log("Repo branches: ",value);
+      this.branchesData = value;
+    });
+    this.apiService.getRepositoryContributorStats("d3", "d3").subscribe((value) => {
+      console.log("Repo collaborators: ",value);
+      this.collaboratorsData = value;
+      this.calculateScatterChartData();
+      this.buildScatterGraph();
+    });
     this.apiService.getUserData("d3").subscribe((value) => {
       console.log("User data: ",value);
       this.userData = value;
     });
+  }
+  calculateScatterChartData(){
+    this.contributionsCount = [];
+    var additions = 0;
+    var deletions = 0;
+    console.log(this.collaboratorsData[99].weeks.length);
+    for(let index = 0; index< this.collaboratorsData[99].weeks.length; index++){
+      var weekCount = 0;
+      additions=this.collaboratorsData[99].weeks[index].a;
+      deletions=this.collaboratorsData[99].weeks[index].d;
+      weekCount = additions+deletions;
+      if(weekCount != 0){
+        this.contributionsCount.push({changes: weekCount, commits: this.collaboratorsData[99].weeks[index].c, index: index});
+      }
+    }
+    console.log("HERE",this.contributionsCount)
   }
   calculateBarChartData(){
     this.uniqueXCount = [];
@@ -68,15 +99,56 @@ export class D3Component implements OnInit {
     console.log("Unique: ",this.uniqueX);
     console.log("Unique count: ",this.uniqueXCount);
   }
-  buildBarChart(){
-    var data = [
-      {title: "title1", score: "166443", "Released": "2014"},
-      {title: "title2", score: "150793", "Released": "2013"},
-      {title: "title3", score: "62342", "Released": "2016"},
-      {title: "title4", score: "27647", "Released": "2010"},
-      {title: "title5", score: "21471", "Released": "2011"},
-    ];
+  buildScatterGraph(){
+      var margin = {top: 50, right: 0, bottom: 30, left: 50},
+      width = 500 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
 
+
+    // append the svg object to the body of the page
+    this.scatterSVG = d3.select("#my_dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+    // Add X axis
+    var x = d3.scaleLinear()
+    .domain([0, 572])
+    .range([ 0, width ]);
+    this.scatterSVG.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+    this.scatterSVG.append("text")             
+    .attr("transform",
+          "translate(" + 60 + " ," + 
+                         height+1 + ")")
+    .style("text-anchor", "middle")
+    .text("Date");
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+    .domain([0, 75000])
+    .range([ height, 0]);
+    this.scatterSVG.append("g")
+    .call(d3.axisLeft(y));
+
+    // Add dots
+    this.scatterSVG.append('g')
+    .selectAll("dot")
+    .data(this.contributionsCount)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.index); } )
+      .attr("cy", function (d) { return y(d.changes); } )
+      .attr("r", 1.5)
+      .style("fill", "#69b3a2")
+  }
+
+  buildBarChart(){
     var margin = 50;
     var width = 600 - (margin * 2);
     var height = 400 - (margin * 2);

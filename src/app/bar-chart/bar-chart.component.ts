@@ -103,7 +103,9 @@ export class BarChartComponent implements OnInit {
   }
   contributionsOverTime(){
     // set the dimensions and margins of the graph
-    var margin = {top: 10, right: 30, bottom: 30, left: 60},
+    // var margin = {top: 200, right: 30, bottom: 200, left: 60},
+    var margin = {top: 10, right: 40, bottom: 30, left: 30},
+
     width = 460 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 

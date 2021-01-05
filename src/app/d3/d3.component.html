@@ -1,5 +1,5 @@
-<div style="height: 100%; background-color: lightgray;">
-    <div class="Row" style=" height: 100%; overflow-y: scroll; background-color: lightgray;">
+<div style="height: 100%; background-color: lightgray; ">
+    <div class="Row" style="overflow-y: scroll; background-color: lightgray;">
         <div class="Column" style=" width: 45%;">
             <h3 class="top-contributors-header">Top d3 contributors</h3>
             <div id="my_dataviz" style="height: 100vh">
@@ -35,9 +35,15 @@
             </div>
         </div>
     </div>
+    <div class="Row" style="background-color: lightgray; height: 90vh;">
+        <h3 style="margin-left: 10%; margin-top: 70px;"> Top User mbostock commits since 2010</h3>
+        <div id="my_dataviz"></div>
+        <p style="margin-left: 15%;">Scatter graph: X = Past 537 weeks, Y = Number of changes</p>
+    </div>
     <div class="Row" style="background-color: lightgray; ">
-        <h3 style="margin-left: 20%; margin-top: 100px;"> Latest 30 Commits breakdown</h3>
+        <h3 style="margin-left: 10%;"> Latest 30 Commits breakdown</h3>
         <figure id="bar"></figure>
         <p style="margin-left: 20%;">No. of users involed in latest 30 commits: {{uniqueX.length}} </p>
     </div>
+
 </div>

@@ -107,5 +107,42 @@ export class GithubAccessService {
       })
   );
   }
-  
+  getRepositoryBranches(username: String, repo: String) {
+    this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/branches";
+    const options = {
+      headers: {
+        authorization: "token e1b9d0a8621f8ab88b52dbe279c6fac8a22e15ef"
+      }
+    };
+    return this.http.get(this.RepoUrl,options).pipe(
+      catchError(error => {
+          if (error.error instanceof ErrorEvent) {
+              this.errorMsg = `Error: ${error.error.message}`;
+          } else {
+              this.errorMsg = `Error: ${error.message}`;
+          }
+          console.log("ERROR");
+          return of([]);
+      })
+  );
+  }
+  getRepositoryContributorStats(username: String, repo: String) {
+    this.RepoUrl = "https://api.github.com/repos/"+username+"/"+repo+"/stats/contributors";
+    const options = {
+      headers: {
+        authorization: "token e1b9d0a8621f8ab88b52dbe279c6fac8a22e15ef"
+      }
+    };
+    return this.http.get(this.RepoUrl,options).pipe(
+      catchError(error => {
+          if (error.error instanceof ErrorEvent) {
+              this.errorMsg = `Error: ${error.error.message}`;
+          } else {
+              this.errorMsg = `Error: ${error.message}`;
+          }
+          console.log("ERROR");
+          return of([]);
+      })
+  );
+  }
 }
